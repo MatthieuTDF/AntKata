@@ -36,9 +36,10 @@ public class Field extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
-                    image.setRGB(e.getX(), e.getY(), Color.green.getRGB());
+                    //image.setRGB(e.getX(), e.getY(), Color.green.getRGB());
                     // TODO
-                    repaint();
+                    food.add(new Food(e.getX(), e.getY()));
+                    //repaint();
                 } catch (Exception exception) {
                     System.out.println("Invalid click");
                 }
@@ -62,6 +63,7 @@ public class Field extends JPanel {
         JButton resetButton = new JButton("Reset");
         resetButton.addActionListener(e -> {
             //TODO
+            initColonyAndFood();
         });
 
         // Init food collected labels
@@ -83,15 +85,12 @@ public class Field extends JPanel {
 
     private void initColonyAndFood() {
         // TODO
-        this.c = new Colony(0, new Point(this.widthX / 2, this.heightX / 2));
+        this.c = new Colony(200, new Point(this.widthX / 2, this.heightX / 2));
         this.food = new ArrayList<>();
     }
 
     public void nextTurn() {
-
         // TODO add lifecycle
-
-        foodLabel.setText("TODO");
 
         this.image = new BufferedImage(widthX, heightX, BufferedImage.TYPE_INT_ARGB);
 
@@ -106,11 +105,16 @@ public class Field extends JPanel {
         repaint();
 
         // On itère sur une autre liste pour pouvoir retirer un élement sans risquer d'erreurs
+        ArrayList <Point> foodsLocation = new ArrayList<Point>();
         for (Food f : new ArrayList<>(food)) {
             f.nextTurn();
-            if (!f.isAlive())
+            if (!f.isAlive()){
                 food.remove(f);
+            }else{
+                foodsLocation.add(f.getPosition());
+            }
         }
+        foodLabel.setText(Integer.toString(c.next(foodsLocation)));
     }
 
     @Override
@@ -118,5 +122,4 @@ public class Field extends JPanel {
         super.paintComponent(g);
         g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
     }
-
 }

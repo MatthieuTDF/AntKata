@@ -18,7 +18,7 @@ public class Food {
 
     public boolean isAlive() {
         // TODO
-        return this.cycles < 6000; // if more then 5 mins then dead
+        return this.cycles < 5000; // if more then 5 mins then dead
     }
 
     public void nextTurn() {

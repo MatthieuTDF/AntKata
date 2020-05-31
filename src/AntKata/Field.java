@@ -25,9 +25,7 @@ public class Field extends JPanel {
         this.heightX = height;
 
         initColonyAndFood();
-
         initOnClickListenerFood();
-
         initUI();
     }
 
@@ -37,7 +35,8 @@ public class Field extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 try {
                     image.setRGB(e.getX(), e.getY(), Color.green.getRGB());
-                    // TODO
+                    //Ajout de la nourriture
+                    food.add(new Food(e.getX(), e.getY()));
                     repaint();
                 } catch (Exception exception) {
                     System.out.println("Invalid click");
@@ -61,7 +60,8 @@ public class Field extends JPanel {
         // Init button
         JButton resetButton = new JButton("Reset");
         resetButton.addActionListener(e -> {
-            //TODO
+            //Initialisation de la colonie
+            initColonyAndFood();
         });
 
         // Init food collected labels
@@ -82,16 +82,13 @@ public class Field extends JPanel {
     }
 
     private void initColonyAndFood() {
-        // TODO
-        this.c = new Colony(0, new Point(this.widthX / 2, this.heightX / 2));
+        this.c = new Colony(300, new Point(this.widthX / 2, this.heightX / 2));
         this.food = new ArrayList<>();
     }
 
     public void nextTurn() {
-
-        // TODO add lifecycle
-
-        foodLabel.setText("TODO");
+        //Liste de mes points de nourriture
+        ArrayList <Point> foodPoint = new ArrayList<Point>();
 
         this.image = new BufferedImage(widthX, heightX, BufferedImage.TYPE_INT_ARGB);
 
@@ -108,9 +105,16 @@ public class Field extends JPanel {
         // On itère sur une autre liste pour pouvoir retirer un élement sans risquer d'erreurs
         for (Food f : new ArrayList<>(food)) {
             f.nextTurn();
-            if (!f.isAlive())
+            if (!f.isAlive()){
                 food.remove(f);
+            }else{
+                foodPoint.add(f.getPosition());
+            }
         }
+        c.next(foodPoint);
+
+        //Affichage de la nourriture récoltée
+        foodLabel.setText(String.valueOf(c.getCollectedFood())) ;
     }
 
     @Override
@@ -118,5 +122,4 @@ public class Field extends JPanel {
         super.paintComponent(g);
         g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
     }
-
 }

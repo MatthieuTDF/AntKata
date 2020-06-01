@@ -46,7 +46,7 @@ public class Colony {
         for ( Ant ant : new ArrayList<>(this.ants) ){
             switch ( ant.getStatus() ) {
                 case WANDERING -> ant.foodPosition( food );
-                //case FETCHING_FOOD -> ant.antPositionOnFood( food );
+                case FETCHING_FOOD -> ant.antPositionOnFood( food );
                 case RETURNING_COLONY -> {
                     if( ant.antPositionColony()) {
                         this.foodCollected ++;

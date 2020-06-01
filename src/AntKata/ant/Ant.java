@@ -73,7 +73,7 @@ public class Ant {
     }
 
     public boolean antPositionOnFood( List<Point> food ){
-        if ( this.position == this.lastKnownFoodPosition ){
+        if ( this.position.equals( this.lastKnownFoodPosition ) ){
             if ( food.contains( this.lastKnownFoodPosition ) ){
                 this.returning( this.lastKnownFoodPosition );
             } else this.status = Status.WANDERING;

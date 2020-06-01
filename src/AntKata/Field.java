@@ -93,7 +93,7 @@ public class Field extends JPanel {
 
         // TODO add lifecycle
 
-        foodLabel.setText("TODO");
+        foodLabel.setText( Integer.toString(c.getFoodCollected()));
 
         this.image = new BufferedImage(widthX, heightX, BufferedImage.TYPE_INT_ARGB);
 

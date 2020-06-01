@@ -68,4 +68,7 @@ public class Colony {
         return position.y;
     }
 
+    public int getFoodCollected() {
+        return foodCollected;
+    }
 }

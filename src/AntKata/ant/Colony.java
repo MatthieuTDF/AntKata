@@ -32,9 +32,9 @@ public class Colony {
         for ( i = 0; i < ants.size() - 1; i++ ){
             for ( j = 1; j < ants.size(); j++ ){
                 if ( ants.get(i).getPosition().equals( ants.get(j).getPosition() ) ) {
-                    if ( ants.get(i).getStatus().equals(Status.FETCHING_FOOD) || ants.get(i).getStatus().equals( Status.RETURNING_COLONY)  ){
-                        ants.get(j).setLastKnownFoodPosition( ants.get(i).getLastKnownFoodPosition() );
-                        ants.get(j).setStatus( Status.FETCHING_FOOD );
+                    if ( ants.get(i).getStatus().equals(Status.FETCHING_FOOD) || ants.get(i).getStatus().equals( Status.RETURNING_COLONY)  ){ //if the first ant is fetching food or returning to colony she communicates the position of the food to the second ant
+                        ants.get(j).setLastKnownFoodPosition( ants.get(i).getLastKnownFoodPosition() ); //the new lastKnownFoodPosition of j is i's one
+                        ants.get(j).setStatus( Status.FETCHING_FOOD ); //the status is npw FETCHING_FOOD if the previous one wasn't
                     } else if ( ants.get(j).getStatus().equals( Status.FETCHING_FOOD ) || ants.get(j).getStatus().equals( Status.RETURNING_COLONY ) ){
                         ants.get(i).setLastKnownFoodPosition( ants.get(j).getLastKnownFoodPosition() );
                         ants.get(i).setStatus( Status.FETCHING_FOOD);
@@ -45,10 +45,10 @@ public class Colony {
 
         for ( Ant ant : new ArrayList<>(this.ants) ){
             switch ( ant.getStatus() ) {
-                case WANDERING -> ant.foodPosition( food );
-                case FETCHING_FOOD -> ant.antPositionOnFood( food );
+                case WANDERING -> ant.foodPosition( food ); //if the ant is wandering and finds food
+                case FETCHING_FOOD -> ant.antPositionOnFood( food ); //if the ant is on a food
                 case RETURNING_COLONY -> {
-                    if( ant.antPositionColony()) {
+                    if( ant.antPositionColony()) { //if the ant is on colony
                         this.foodCollected ++;
                     }
                 }

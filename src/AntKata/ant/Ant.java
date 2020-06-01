@@ -38,6 +38,7 @@ public class Ant {
         }
     }
 
+    //method to set the direction the ant will be going according to the position given in parameters
     private void direction ( Point foodPosition ) {
         if ( this.getPositionX() < foodPosition.getX() ) {
             this.position = new Point( this.getPositionX() + 1, this.getPositionY() );
@@ -50,20 +51,22 @@ public class Ant {
             this.position = new Point( this.getPositionX(), this.getPositionY() - 1 );
         }
     }
-
+//method to go back to the colony
     private void returning ( Point foodPosition ){
         this.lastKnownFoodPosition = foodPosition;
         this.status = Status.RETURNING_COLONY;
     }
 
+    //if an ant is wandering and find food, to set her status to returning
     public void foodPosition ( List<Point> food ) {
         for ( Point f : food ){
             if ( f.equals(this.position) ){
                 this.returning( f );
             }
         }
-    }
 
+    }
+//if the ant is on colony
     public boolean antPositionColony() {
         if ( this.position.equals(this.colonyPosition) ){
             this.status = Status.FETCHING_FOOD;
@@ -71,12 +74,13 @@ public class Ant {
         }
         return false;
     }
-
+//method to tell what the ant should do if on a food
     public boolean antPositionOnFood( List<Point> food ){
-        if ( this.position.equals( this.lastKnownFoodPosition ) ){
-            if ( food.contains( this.lastKnownFoodPosition ) ){
-                this.returning( this.lastKnownFoodPosition );
-            } else this.status = Status.WANDERING;
+        if ( this.position.equals( this.lastKnownFoodPosition ) ){ //if the ant position is equal to the position of the last food found
+            if ( food.contains( this.lastKnownFoodPosition ) ){ //if the lastKnowFoodPosition is included in food
+                this.returning( this.lastKnownFoodPosition ); //goes back to the colony
+            }
+            return true;
         }
         return false;
     }

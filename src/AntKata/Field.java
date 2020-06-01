@@ -2,6 +2,7 @@ package AntKata;
 
 import AntKata.ant.Ant;
 import AntKata.ant.Colony;
+import AntKata.ant.Status;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,6 +39,8 @@ public class Field extends JPanel {
                 try {
                     image.setRGB(e.getX(), e.getY(), Color.green.getRGB());
                     // TODO
+                    food.add(new Food(e.getX(),e.getY()));
+
                     repaint();
                 } catch (Exception exception) {
                     System.out.println("Invalid click");
@@ -62,6 +65,7 @@ public class Field extends JPanel {
         JButton resetButton = new JButton("Reset");
         resetButton.addActionListener(e -> {
             //TODO
+            initColonyAndFood();
         });
 
         // Init food collected labels
@@ -83,7 +87,7 @@ public class Field extends JPanel {
 
     private void initColonyAndFood() {
         // TODO
-        this.c = new Colony(0, new Point(this.widthX / 2, this.heightX / 2));
+        this.c = new Colony(100, new Point(this.widthX / 2, this.heightX / 2));
         this.food = new ArrayList<>();
     }
 
@@ -91,7 +95,26 @@ public class Field extends JPanel {
 
         // TODO add lifecycle
 
-        foodLabel.setText("TODO");
+        for(Ant ant : this.c.getAnts()) {
+            Status status = ant.getStatus();
+            if (status == Status.RETURNING_COLONY) {
+                if(ant.collect(this.c.getPosition()))
+                    this.c.addFood();
+                continue;
+            }
+            ant.search();
+            for (Food foods : food){
+                if (ant.getPosition().equals(foods.getPosition())) {
+                    if(ant.getLastKnownFoodPosition() == null)
+                        ant.foodFound(foods.getPosition());
+                    foods.harvest();
+                    break;
+                }
+            }
+        }
+
+
+        foodLabel.setText(""+this.c.getFoodCollected());
 
         this.image = new BufferedImage(widthX, heightX, BufferedImage.TYPE_INT_ARGB);
 

@@ -18,6 +18,10 @@ public class Colony {
         // TODO
         this.ants = new ArrayList<>();
         this.position = position;
+        for(int i = 0; i<nbAnts;i++){
+            this.ants.add(new Ant(position));
+        }
+        this.foodCollected = 0;
     }
 
     public int next(List<Point> food) {
@@ -26,14 +30,28 @@ public class Colony {
         return foodCollected;
     }
 
-    public List<Ant> getAnts() {
-        return ants;
+    public void addFood(){
+        for(Ant ant : ants){
+            if(ant.getStatus()==Status.RETURNING_COLONY)
+                if(this.position.x==ant.getPositionX()&&this.position.y==ant.getPositionY())
+                    foodCollected++;
+        }
     }
 
-    public int getPositionX() { return position.x; }
+    public List<Ant> getAnts() {
+        return this.ants;
+    }
+
+    public int getPositionX() { return this.position.x; }
 
     public int getPositionY() {
-        return position.y;
+        return this.position.y;
+    }
+
+    public Point getPosition(){return this.position;}
+
+    public int getFoodCollected(){
+        return this.foodCollected;
     }
 
 }

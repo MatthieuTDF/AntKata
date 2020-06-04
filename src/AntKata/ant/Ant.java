@@ -100,7 +100,7 @@ public class Ant {
         if (this.position.equals(ant.getPosition()))
             if(ant.getStatus()==WANDERING && this.status != WANDERING)
                 ant.foodFound(this.lastFood);
-            if(ant.getPosition().equals(this.position)&&ant.getStatus()!=WANDERING)
+            else if(ant.getPosition().equals(this.position)&&ant.getStatus()!=WANDERING)
                 this.foodFound((ant.getLastFood()));
     }
 

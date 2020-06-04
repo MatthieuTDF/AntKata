@@ -108,7 +108,7 @@ public class Field extends JPanel {
                     if (ant.getPosition().equals(f.getPosition())) {
                         if(ant.getStatus() == Status.WANDERING)
                             ant.foodFound(f);
-                        f.harvest();
+                        //f.harvest();
                         break;
                     }
                 /*else
@@ -120,9 +120,9 @@ public class Field extends JPanel {
             /*if(ant.getStatus()==Status.FETCHING_FOOD)
                 fetchAnt.add(ant);*/
             ant.search();
-            /*for(Ant a : this.c.getAnts().subList(j,this.c.getAnts().size()))
+            for(Ant a : this.c.getAnts().subList(j,this.c.getAnts().size()))
                 ant.talk(a);
-            j++;*/
+            j++;
         }
 
 

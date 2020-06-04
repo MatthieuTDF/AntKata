@@ -97,11 +97,16 @@ public class Ant {
     }
 
     public void talk(Ant ant){
-        if (this.position.equals(ant.getPosition()))
-            if(ant.getStatus()==WANDERING && this.status != WANDERING)
+        if(this.position.equals(ant.getPosition())) {
+            if (ant.getStatus() == WANDERING && this.status != WANDERING) {
                 ant.foodFound(this.lastFood);
-            else if(ant.getPosition().equals(this.position)&&ant.getStatus()!=WANDERING)
+                System.out.println("talk");
+            }
+            if (ant.getStatus() != WANDERING && this.status == WANDERING) {
                 this.foodFound((ant.getLastFood()));
+                System.out.println("talk");
+            }
+        }
     }
 
     public int getPositionX() {

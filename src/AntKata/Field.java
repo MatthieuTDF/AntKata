@@ -87,14 +87,15 @@ public class Field extends JPanel {
 
     private void initColonyAndFood() {
         // TODO
-        this.c = new Colony(100, new Point(this.widthX / 2, this.heightX / 2));
+        this.c = new Colony(50, new Point(this.widthX / 2, this.heightX / 2));
         this.food = new ArrayList<>();
     }
 
     public void nextTurn() {
 
         // TODO add lifecycle
-
+        //List<Ant> fetchAnt = new ArrayList<>();
+        int j = 1;
         for(Ant ant : this.c.getAnts()) {
             Status status = ant.getStatus();
             if (status == Status.RETURNING_COLONY) {
@@ -102,15 +103,26 @@ public class Field extends JPanel {
                     this.c.addFood();
                 continue;
             }
-            ant.search();
-            for (Food foods : food){
-                if (ant.getPosition().equals(foods.getPosition())) {
-                    if(ant.getLastKnownFoodPosition() == null)
-                        ant.foodFound(foods.getPosition());
-                    foods.harvest();
-                    break;
-                }
+            for (Food f : food){
+                if(f.isAlive())
+                    if (ant.getPosition().equals(f.getPosition())) {
+                        if(ant.getStatus() == Status.WANDERING)
+                            ant.foodFound(f);
+                        f.harvest();
+                        break;
+                    }
+                /*else
+                    if(ant.getStatus()==Status.FETCHING_FOOD){
+                        if(ant.getLastKnownFoodPosition().equals(foods.getPosition()))
+                            ant.foodDead();
+                    }*/
             }
+            /*if(ant.getStatus()==Status.FETCHING_FOOD)
+                fetchAnt.add(ant);*/
+            /*ant.search();
+            for(Ant a : this.c.getAnts().subList(j,this.c.getAnts().size()))
+                ant.talk(a);
+            j++;*/
         }
 
 
@@ -129,11 +141,15 @@ public class Field extends JPanel {
         repaint();
 
         // On itère sur une autre liste pour pouvoir retirer un élement sans risquer d'erreurs
-        for (Food f : new ArrayList<>(food)) {
-            f.nextTurn();
-            if (!f.isAlive())
-                food.remove(f);
-        }
+        //f.nextTurn();
+        /*for (Food f : food) {
+            //f.nextTurn();
+            for(Ant ant : fetchAnt)
+                if (!f.isAlive() && ant.getLastKnownFoodPosition().equals(f.getPosition()))
+                    ant.foodDead();
+        }*/
+        //for(Ant ant : fetchAnt)
+        food.removeIf(f -> !f.isAlive());
     }
 
     @Override

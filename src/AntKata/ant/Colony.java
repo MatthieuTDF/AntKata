@@ -31,11 +31,7 @@ public class Colony {
     }
 
     public void addFood(){
-        for(Ant ant : ants){
-            if(ant.getStatus()==Status.RETURNING_COLONY)
-                if(this.position.x==ant.getPositionX()&&this.position.y==ant.getPositionY())
-                    foodCollected++;
-        }
+        foodCollected++;
     }
 
     public List<Ant> getAnts() {

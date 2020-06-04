@@ -8,7 +8,7 @@ public class Food {
     private int life;
 
     public Point getPosition() {
-        return position;
+        return this.position;
     }
 
     public Food(int x, int y,int life) {

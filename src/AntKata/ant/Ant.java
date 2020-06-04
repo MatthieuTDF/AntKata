@@ -7,15 +7,14 @@ import AntKata.ant.Colony;
 import java.awt.Point;
 import java.util.List;
 
-
-import static AntKata.ant.Status.FETCHING_FOOD;
-import static AntKata.ant.Status.WANDERING;
+import static AntKata.ant.Status.*;
 
 
 public class Ant {
     private Point position;
     private Status status;
-    private Point lastKnownFoodPosition;
+    //private Point lastKnownFoodPosition;
+    private Food lastFood;
     //private List<Food> foodPoint;
     // TODO Attributs
 
@@ -23,7 +22,8 @@ public class Ant {
         // TODO
         this.position = positionColony;
         this.status = WANDERING;
-        this.lastKnownFoodPosition = null;
+        //this.lastKnownFoodPosition = null;
+        this.lastFood = null;
     }
 
     private void scatter() {
@@ -37,26 +37,33 @@ public class Ant {
 
     // TODO Méthodes de classes
 
-    private boolean fetch(){
-        Point lastFood = this.getLastKnownFoodPosition();
-        int x = this.position.x;
-        int y = this.position.y;
-        if(this.position.equals(lastFood)) {
-            this.status = Status.RETURNING_COLONY;
-            return true;
+    private void fetch(){
+        //Point lastFood = this.getLastKnownFoodPosition();
+        if(this.lastFood.isAlive()) {
+            int x = this.position.x;
+            int y = this.position.y;
+            if (this.position.equals(this.lastFood.getPosition())) {
+                this.status = Status.RETURNING_COLONY;
+                this.lastFood.harvest();
+                //return true;
+            } else {
+                if (x > this.lastFood.getPosition().getX())
+                    x--;
+                if (x < this.lastFood.getPosition().getX())
+                    x++;
+                if (y > this.lastFood.getPosition().getY())
+                    y--;
+                if (y < this.lastFood.getPosition().getY())
+                    y++;
+                this.setPosition(new Point(x, y));
+            }
+            //return false;
         }
         else{
-            if(x>lastFood.getX())
-                x--;
-            if(x<lastFood.getX())
-                x++;
-            if(y>lastFood.getY())
-                y--;
-            if(y<lastFood.getY())
-                y++;
-            this.setPosition(new Point(x,y));
+            this.status = WANDERING;
+            this.scatter();
         }
-        return false;
+
     }
 
     public boolean collect(Point colony){
@@ -80,13 +87,21 @@ public class Ant {
         return false;
     }
 
-    public boolean search(){
+    public void search(){
         if(status == WANDERING) {
-            scatter();
-            return false;
+            this.scatter();
+            //return false;
         }
         else
-            return fetch();
+            this.fetch();
+    }
+
+    public void talk(Ant ant){
+        if (this.position.equals(ant.getPosition()))
+            if(ant.getStatus()==WANDERING && this.status != WANDERING)
+                ant.foodFound(this.lastFood);
+            if(ant.getPosition().equals(this.position)&&ant.getStatus()!=WANDERING)
+                this.foodFound((ant.getLastFood()));
     }
 
     public int getPositionX() {
@@ -110,15 +125,28 @@ public class Ant {
     }
 
     public Point getLastKnownFoodPosition() {
-        return this.lastKnownFoodPosition;
+        return this.lastFood.getPosition();
     }
-
+    /*
     public void foodFound(Point point) {
         this.lastKnownFoodPosition = new Point(point.x,point.y);
-        this.status = FETCHING_FOOD;
+        this.status = RETURNING_COLONY;
     }
     public void foodDead(){
         this.lastKnownFoodPosition = null;
         this.status = WANDERING;
+    }*/
+
+    public Food getLastFood(){
+        return this.lastFood;
     }
+
+    public void foodFound(Food food){
+        this.status = FETCHING_FOOD;
+        this.lastFood = food;
+    }
+
+    //public void foodDead(){
+        //if(this.status)
+    //}
 }

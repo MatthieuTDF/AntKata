@@ -11,6 +11,7 @@ public class Ant {
     private Status status;
     private Point lastKnownFoodPosition;
     private Point positionColony;
+    private int count = 0;
 
     // TODO Attributs
 
@@ -36,8 +37,25 @@ public class Ant {
                     this.position = new Point(this.getPositionX()+randomX, this.getPositionY()+randomY);
                 }
                 break;
+            case WANDERING2:
+                while(count < 100) {
+                    if (this.getPositionX() >= (int) positionColony.getX() * 2 - 3 || this.getPositionY() >= (int) positionColony.getY() * 2 - 3) {
+                        this.position = new Point((int) positionColony.getX(), (int) positionColony.getY());
+                        count++;
+                    }
+                    if (this.getPositionX() <= 3 || this.getPositionY() <= 3) {
+                        this.position = new Point((int) positionColony.getX(), (int) positionColony.getY());
+                        count++;
+                    } else {
+                        this.position = new Point(this.getPositionX() + randomX, this.getPositionY() + randomY);
+                        count++;
+                    }
+                    break;
+                }
+                this.status = Status.WANDERING;
+                count = 0;
+                break;
             case FETCHING_FOOD:
-                //this.position = this.lastKnownFoodPosition;
                 if (this.getPositionX() < (int)this.lastKnownFoodPosition.getX()) {
                     this.position = new Point(this.getPositionX()+1, this.getPositionY());
                 }
@@ -73,13 +91,14 @@ public class Ant {
     private void foundFood(Point foodLocation){
         this.lastKnownFoodPosition = foodLocation;
         this.status = Status.RETURNING_COLONY;
-        //System.out.println("Found Food");
     }
 
     //Checks if ant on food
     public void findFood(List<Point> food){
         for (Point foodLocation : food) {
-            if (foodLocation.equals(this.position)) this.foundFood(foodLocation);
+            if (foodLocation.equals(this.position)){
+                this.foundFood(foodLocation);
+            }
         }
     }
 
@@ -99,7 +118,7 @@ public class Ant {
             if (food.contains(this.lastKnownFoodPosition)){
                 this.foundFood(this.lastKnownFoodPosition);
             }else{
-                this.status = Status.WANDERING;
+                this.status = Status.WANDERING2;
             }
         }
     }

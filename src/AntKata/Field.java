@@ -36,10 +36,10 @@ public class Field extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
-                    //image.setRGB(e.getX(), e.getY(), Color.green.getRGB());
+                    image.setRGB(e.getX(), e.getY(), Color.green.getRGB());
+                    repaint();
                     // TODO
                     food.add(new Food(e.getX(), e.getY()));
-                    //repaint();
                 } catch (Exception exception) {
                     System.out.println("Invalid click");
                 }
@@ -84,7 +84,6 @@ public class Field extends JPanel {
     }
 
     private void initColonyAndFood() {
-        // TODO
         this.c = new Colony(200, new Point(this.widthX / 2, this.heightX / 2));
         this.food = new ArrayList<>();
     }

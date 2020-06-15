@@ -15,13 +15,17 @@ public class Colony {
     private int foodCollected;
 
     public Colony(int nbAnts, Point position) {
-        // TODO
+        int i;
         this.ants = new ArrayList<>();
+        for(i=0;i<nbAnts;i++){
+            this.ants.add(new Ant(position)); // On initialise les fourmis a la pos de depart de la colony
+        }
         this.position = position;
     }
 
     public int next(List<Point> food) {
         // TODO
+        //Oups je l'avais pas vu
 
         return foodCollected;
     }

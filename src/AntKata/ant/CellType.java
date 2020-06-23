@@ -1,5 +1,8 @@
 package AntKata.ant;
 
 public enum CellType {
-    // TODO
+    NORMAL,
+    FOOD,
+    COLONY,
+    ENNEMY_COLONY
 }

@@ -2,6 +2,8 @@ package AntKata;
 
 import AntKata.ant.Ant;
 import AntKata.ant.Colony;
+import AntKata.ant.CellType;
+//import jdk.internal.org.objectweb.asm.commons.SerialVersionUIDAdder;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,6 +13,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.stream.Collectors;
+import java.util.Arrays;
 
 public class Field extends JPanel {
     private BufferedImage image;
@@ -19,16 +22,19 @@ public class Field extends JPanel {
     private int widthX;
     private int heightX;
     private JLabel foodLabel;
+    private CellType[][] cellArray;
+    //static final long SerialVersionUID;
 
     public Field(int width, int height) {
         this.widthX = width;
         this.heightX = height;
+        this.cellArray = new CellType[width][height];
 
-        initColonyAndFood();
+        this.initColonyAndFood();
 
-        initOnClickListenerFood();
+        this.initOnClickListenerFood();
 
-        initUI();
+        this.initUI();
     }
 
     private void initOnClickListenerFood() {
@@ -37,7 +43,9 @@ public class Field extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 try {
                     image.setRGB(e.getX(), e.getY(), Color.green.getRGB());
-                    // TODO
+                    // TODO : set clicked position as FOOD
+                    food.add(new Food(e.getX(), e.getY()));
+
                     repaint();
                 } catch (Exception exception) {
                     System.out.println("Invalid click");
@@ -61,7 +69,7 @@ public class Field extends JPanel {
         // Init button
         JButton resetButton = new JButton("Reset");
         resetButton.addActionListener(e -> {
-            //TODO
+            this.initColonyAndFood();
         });
 
         // Init food collected labels
@@ -81,17 +89,25 @@ public class Field extends JPanel {
         repaint();
     }
 
+    private void syncCellArrayAndFood() {
+        Arrays.fill(cellArray, CellType.NORMAL);
+        cellArray[this.c.getPositionX()][this.c.getPositionY()] = CellType.COLONY;
+        for (Food f: this.food) {
+            Point foodPos = f.getPosition();
+            this.cellArray[foodPos.x][foodPos.y] = CellType.FOOD;
+        }
+    }
+
     private void initColonyAndFood() {
-        // TODO
         this.c = new Colony(0, new Point(this.widthX / 2, this.heightX / 2));
         this.food = new ArrayList<>();
+        this.food.add(new Food(3,3));
+        this.cellArray[this.widthX/2][this.heightX/2] = CellType.COLONY;
+        syncCellArrayAndFood();
     }
 
     public void nextTurn() {
-
-        // TODO add lifecycle
-
-        foodLabel.setText("TODO");
+        foodLabel.setText(String.valueOf(c.getFoodCollected()));
 
         this.image = new BufferedImage(widthX, heightX, BufferedImage.TYPE_INT_ARGB);
 
@@ -106,11 +122,12 @@ public class Field extends JPanel {
         repaint();
 
         // On itère sur une autre liste pour pouvoir retirer un élement sans risquer d'erreurs
-        for (Food f : new ArrayList<>(food)) {
+        for (Food f : new ArrayList<>(this.food)) {
             f.nextTurn();
             if (!f.isAlive())
                 food.remove(f);
         }
+        this.syncCellArrayAndFood();
     }
 
     @Override
@@ -118,5 +135,4 @@ public class Field extends JPanel {
         super.paintComponent(g);
         g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
     }
-
 }

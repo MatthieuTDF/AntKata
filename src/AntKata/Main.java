@@ -34,5 +34,4 @@ public class Main {
             Thread.sleep(50);
         }
     }
-
 }

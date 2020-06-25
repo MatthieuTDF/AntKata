@@ -8,28 +8,33 @@ import java.util.List;
 
 public class Ant {
     private Point position;
-    private Status status;
+    protected Status status;
     private Point lastKnownFoodPosition;
     private Point colonyPosition;
     private int foodCarried;
-    private int hp;
+    protected int hp;
+    protected Point ennemyColonyPosition;
+    protected int damage;
 
     public Ant(Point positionColony) {
         this.position = positionColony;
         this.colonyPosition = positionColony;
         this.status = Status.WANDERING;
-        this.lastKnownFoodPosition = new Point(0, 0);
+        this.lastKnownFoodPosition = new Point(positionColony);
         this.foodCarried = 0;
+        this.hp = 10;
+        this.ennemyColonyPosition = new Point(positionColony);
+        this.damage = 5;
     }
 
-    private void scatter() {
+    protected void scatter() {
         int randomX = RNG.random(-1, 1);
         int randomY = RNG.random(-1, 1);
 
         setPosition(new Point(getPositionX()+randomX, getPositionY()+randomY));
     }
 
-    private void fetchFood() {
+    protected void fetchFood() {
         int[] axis = this.pathTo(this.lastKnownFoodPosition);
         int newposX=0, newposY=0;
         switch (axis[0]) {
@@ -62,7 +67,7 @@ public class Ant {
         setPosition(new Point(newposX, newposY));
     }
 
-    private void collect() {
+    protected void collect() {
         int[] axis = this.pathTo(this.colonyPosition);
         int newposX=0, newposY=0;
         switch (axis[0]) {
@@ -95,7 +100,7 @@ public class Ant {
         setPosition(new Point(newposX, newposY));
     }
 
-    private int[] pathTo(Point location) {
+    protected int[] pathTo(Point location) {
         double distanceX = location.getX() - this.position.getX();
         double distanceY = location.getY() - this.position.getY();
         int x, y;
@@ -161,6 +166,16 @@ public class Ant {
         else if (this.getStatus() == Status.WANDERING && anotherAnt.getStatus() == Status.FETCHING_FOOD) {
             this.setLastKnownFoodPosition(anotherAnt.getLastKnownFoodPosition());
         }
+        if (!this.getEnnemyPointColony().equals(this.colonyPosition) && anotherAnt.getEnnemyPointColony().equals(anotherAnt.colonyPosition)) {
+            anotherAnt.setEnnemyPointColony(this.getEnnemyPointColony());
+        }
+        else if (!anotherAnt.getEnnemyPointColony().equals(anotherAnt.colonyPosition) && !this.getEnnemyPointColony().equals(this.colonyPosition)) {
+            this.setEnnemyPointColony(anotherAnt.getEnnemyPointColony());
+        }
+    }
+
+    public void fight(Ant ennemyAnt) {
+        ennemyAnt.setHp(ennemyAnt.getHp()-this.damage);
     }
 
     public void processMovement() {
@@ -176,6 +191,11 @@ public class Ant {
             case FETCHING_FOOD:
                 this.fetchFood();
                 break;
+
+            case SEEKING:
+                this.setStatus(Status.WANDERING);
+                this.scatter();
+                break;
         }
     }
 
@@ -189,6 +209,26 @@ public class Ant {
 
     public int getHp() {
         return this.hp;
+    }
+
+    public void setHp(int val) {
+        this.hp = val;
+    }
+
+    public Point getEnnemyPointColony() {
+        return this.ennemyColonyPosition;
+    }
+
+    public void setEnnemyPointColony(Point p) {
+        this.ennemyColonyPosition = new Point(p);
+    } 
+
+    public void attackEnnemyColony(Colony c) {
+        c.setHp(c.getHp()-this.damage);
+    }
+
+    public Point getColonyPoint() {
+        return this.colonyPosition;
     }
 
     public void setStatus(Status status) {

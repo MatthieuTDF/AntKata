@@ -50,14 +50,17 @@ public class Colony {
                         ant.setFoodCarried(1);
                         break;
 
-                    case RETURNING_COLONY:
-                        ant.setLastKnownFoodPosition(ant.getPosition());
-                        break;
-                    
                     case WANDERING:
                         ant.setLastKnownFoodPosition(ant.getPosition());
                         ant.setStatus(Status.RETURNING_COLONY);
                         ant.setFoodCarried(1);
+                        break;
+
+                    case RETURNING_COLONY:
+                        break;
+
+                    case SEEKING:
+                        ant.setLastKnownFoodPosition(ant.getPosition());
                         break;
                 }
             }
@@ -89,5 +92,9 @@ public class Colony {
 
     public int getHp() {
         return this.hp;
+    }
+
+    public void setHp(int val) {
+        this.hp = val;
     }
 }

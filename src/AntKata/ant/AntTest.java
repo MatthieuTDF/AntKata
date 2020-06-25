@@ -84,7 +84,7 @@ public class AntTest {
 
         // Check
         Assert.assertEquals(Status.RETURNING_COLONY, c.getAnts().get(0).getStatus());
-        Assert.assertEquals(Status.FETCHING_FOOD, c.getAnts().get(1).getStatus());
+        Assert.assertEquals(Status.RETURNING_COLONY, c.getAnts().get(1).getStatus());
         Assert.assertEquals(food.get(0), c.getAnts().get(1).getLastKnownFoodPosition());
     }
 }

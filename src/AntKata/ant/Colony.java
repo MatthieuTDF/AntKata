@@ -25,6 +25,13 @@ public class Colony {
 
     public int next(CellType[][] cellArray) {
         for (Ant ant: this.ants) {
+            for (Ant otherAnt: this.ants) {
+                if(otherAnt.getPosition().equals(ant.getPosition())) {
+                    ant.talk(otherAnt);
+                }
+            }
+        }
+        for (Ant ant: this.ants) {
             ant.processMovement();
             if (ant.getPosition().equals(this.position) && ant.getStatus() == Status.RETURNING_COLONY) {
                 this.foodCollected += ant.getFoodCarried();
@@ -56,13 +63,6 @@ public class Colony {
             else if (ant.getPosition().equals(ant.getLastKnownFoodPosition())) {
                 ant.setLastKnownFoodPosition(this.getPosition());
                 ant.setStatus(Status.WANDERING);
-            }
-        }
-        for (Ant ant: this.ants) {
-            for (Ant otherAnt: this.ants) {
-                if(otherAnt.getPosition().equals(ant.getPosition())) {
-                    ant.talk(otherAnt);
-                }
             }
         }
         return foodCollected;

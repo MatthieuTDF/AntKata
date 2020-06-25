@@ -91,23 +91,33 @@ public class AntTest {
     @Test
     public void antsAttackEnnemyColony() {
         // given
-        Colony c = new Colony(2, new Point(5, 5));
-        Colony c2 = new Colony(0, new Point(4, 4));
+        Colony c = new Colony(1, new Point(4, 4));
+        Colony c2 = new Colony(0, new Point(5, 5));
+        c.addWarriorAnt();
+
+        Assert.assertEquals(false, c.getAnts().get(0) instanceof WarriorAnt);
+        Assert.assertEquals(true, c.getAnts().get(1) instanceof WarriorAnt);
+        Assert.assertEquals(100, c2.getHp());
 
         CellType[][] cellArray = new CellType[10][10];
         cellArray[5][5] = CellType.COLONY;
         cellArray[4][4] = CellType.COLONY;
 
-        c.next(cellArray);
+        c.next(cellArray, c2);
         
-        Assert.assertEquals(new Point(4, 4), c.getAnts().get(0).getPosition());
-        Assert.assertEquals(new Point(4, 4), c.getAnts().get(1).getPosition());
+        Assert.assertEquals(new Point(5, 5), c.getAnts().get(0).getPosition());
+        Assert.assertEquals(new Point(5, 5), c.getAnts().get(1).getPosition());
         // ants found second colony
-        c.next(cellArray);
+        c.next(cellArray, c2);
 
-        Assert.assertEquals(new Point(4, 4), c.getAnts().get(0).getPosition());
-        Assert.assertEquals(new Point(4, 4), c.getAnts().get(1).getPosition());
-        Assert.assertEquals(90, c2.getHp());
+        // check if regular ant moved on
+        Assert.assertEquals(new Point(6, 6), c.getAnts().get(0).getPosition());
+        Assert.assertEquals(Status.WANDERING, c.getAnts().get(0).getStatus());
+        // check if WarriorAnt stayed to destroy the colony
+        Assert.assertEquals(Status.SEEKING, c.getAnts().get(1).getStatus());
+        Assert.assertEquals(new Point(5, 5), c.getAnts().get(1).getPosition());
+        // check if colony lost hp appropriately
+        Assert.assertEquals(75, c2.getHp());
     }
 
     @Test
@@ -115,26 +125,38 @@ public class AntTest {
         Colony c = new Colony(1, new Point(9, 9));
         Colony c2 = new Colony(1, new Point(5, 5));
 
-        CellType[][] cellArray = new CellType[10][10];
+        CellType[][] cellArray = new CellType[11][11];
+        cellArray[9][9] = CellType.COLONY;
         cellArray[5][5] = CellType.COLONY;
-        cellArray[4][4] = CellType.COLONY;
 
-        c.next(cellArray);
-        c2.next(cellArray);
+        c2.next(cellArray, c);
 
         // c ant in 8,8
         // c2 ant in 6,6
 
-        Assert.assertEquals(new Point(8, 8), c.getAnts().get(0).getPosition());
+        Assert.assertEquals(new Point(9, 9), c.getAnts().get(0).getPosition());
         Assert.assertEquals(new Point(6, 6), c2.getAnts().get(0).getPosition());
         // ants move to 7,7 and meet
-        c.next(cellArray);
-        c2.next(cellArray);
+        c2.next(cellArray, c);
         // ants in the right position
-        Assert.assertEquals(new Point(7, 7), c.getAnts().get(0).getPosition());
+        Assert.assertEquals(new Point(9, 9), c.getAnts().get(0).getPosition());
         Assert.assertEquals(new Point(7, 7), c2.getAnts().get(0).getPosition());
+
+        c2.next(cellArray, c);
+        // ants in the right position
+        Assert.assertEquals(new Point(9, 9), c.getAnts().get(0).getPosition());
+        Assert.assertEquals(new Point(8, 8), c2.getAnts().get(0).getPosition());
+
+        c2.next(cellArray, c);
+        // ants in the right position
+        Assert.assertEquals(new Point(9, 9), c.getAnts().get(0).getPosition());
+        Assert.assertEquals(new Point(9, 9), c2.getAnts().get(0).getPosition());
+
+        c2.next(cellArray, c);
         // ants attacked each other
         Assert.assertEquals(5, c.getAnts().get(0).getHp());
         Assert.assertEquals(5, c2.getAnts().get(0).getHp());
+        // check if ants correctly protected their colony
+        Assert.assertEquals(100, c.getHp());
     }
 }

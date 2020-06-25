@@ -12,6 +12,7 @@ public class Ant {
     private Point lastKnownFoodPosition;
     private Point colonyPosition;
     private int foodCarried;
+    private int hp;
 
     public Ant(Point positionColony) {
         this.position = positionColony;
@@ -184,6 +185,10 @@ public class Ant {
 
     public void setFoodCarried(int val) {
         this.foodCarried = val;
+    }
+
+    public int getHp() {
+        return this.hp;
     }
 
     public void setStatus(Status status) {

@@ -13,6 +13,7 @@ public class Colony {
     private List<Ant> ants;
     private Point position;
     private int foodCollected;
+    private int hp;
 
     public Colony(int nbAnts, Point position) {
         this.ants = new ArrayList<>();
@@ -86,4 +87,7 @@ public class Colony {
         return position.y;
     }
 
+    public int getHp() {
+        return this.hp;
+    }
 }

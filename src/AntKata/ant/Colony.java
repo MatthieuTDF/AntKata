@@ -1,5 +1,6 @@
 package AntKata.ant;
 
+import AntKata.Food;
 import AntKata.ant.Ant;
 import AntKata.ant.CellType;
 
@@ -24,26 +25,33 @@ public class Colony {
 
     public int next(List<Point> food) {
         for (Ant a : ants){
-            if (a.getStatus() == Status.WANDERING){
+            if (a.getStatus() == Status.WANDERING && a.getLastKnownFoodPosition() == null){
                 a.scatter(food);
             }
             if (a.getStatus() == Status.FETCHING_FOOD){
-                a.fetch();
+                if(a.fetch()){
+                    a.fetch();
+                }
             }
             if (a.getStatus() == Status.RETURNING_COLONY){
                 if (a.collect()){
                     this.foodCollected++;
+                    a.fetch();
                 }
             }
 
             for (int i = 0; i < ants.size(); i++) {
                 for (Ant ant : ants) {
-                    if (ants.get(i).getPosition() == ant.getPosition()) {
-                        if ((ants.get(i).fetch() || ants.get(i).collect()) && ant.getStatus() == Status.WANDERING) {
+                    if (new Point(ants.get(i).getPositionX(), ants.get(i).getPositionY()).equals(new Point(ant.getPositionX(), ant.getPositionY()))) {
+                        if ((ants.get(i).getStatus() == Status.FETCHING_FOOD || ants.get(i).getStatus() == Status.RETURNING_COLONY) && ant.getStatus() == Status.WANDERING) {
                             ant.setLastKnownFoodPosition(ants.get(i).getLastKnownFoodPosition());
+                            ant.setStatus(Status.FETCHING_FOOD);
+                            ant.fetch();
                         }
-                        if ((ant.fetch() || ant.collect()) && ants.get(i).getStatus() == Status.WANDERING) {
+                        if ((ant.getStatus() == Status.RETURNING_COLONY || ant.getStatus() == Status.FETCHING_FOOD) && ants.get(i).getStatus() == Status.WANDERING) {
                             ants.get(i).setLastKnownFoodPosition(ant.getLastKnownFoodPosition());
+                            ants.get(i).setStatus(Status.RETURNING_COLONY);
+                            ants.get(i).fetch();
                         }
                     }
                 }

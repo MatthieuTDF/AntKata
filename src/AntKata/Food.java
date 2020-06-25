@@ -10,9 +10,17 @@ public class Food {
         return position;
     }
 
+    public int getPositionX() {
+        return position.x;
+    }
+
+    public int getPositionY() {
+        return position.y;
+    }
+
     public Food(int x, int y) {
         this.position = new Point(x, y);
-        this.lifeTime = 100000000;
+        this.lifeTime = 100;
     }
 
     public boolean isAlive() {

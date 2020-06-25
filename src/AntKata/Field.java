@@ -2,6 +2,7 @@ package AntKata;
 
 import AntKata.ant.Ant;
 import AntKata.ant.Colony;
+import AntKata.ant.Status;
 
 import javax.swing.*;
 import java.awt.*;
@@ -102,14 +103,21 @@ public class Field extends JPanel {
         this.image.setRGB(c.getPositionX(), c.getPositionY(), Color.red.getRGB());
 
         repaint();
-
+        List<Ant> ants = c.getAnts();
         // On itère sur une autre liste pour pouvoir retirer un élement sans risquer d'erreurs
         ArrayList <Point> foods = new ArrayList<>();
         for (Food f : new ArrayList<>(food)) {
             if (!f.isAlive()){
+                /*for (Ant a : ants) {
+                    if (a.getLastKnownFoodPosition().equals(new Point(f.getPositionX(), f.getPositionY()))){
+                        a.setLastKnownFoodPosition(null);
+                        a.setStatus(Status.WANDERING);
+                    }
+                }*/
                 food.remove(f);
             }else{
                 foods.add(f.getPosition());
+                f.nextTurn();
             }
         }
         foodLabel.setText(Integer.toString(c.next(foods)));

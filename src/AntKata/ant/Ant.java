@@ -1,6 +1,5 @@
 package AntKata.ant;
 
-import AntKata.Food;
 import AntKata.Random.RNG;
 
 import java.awt.Point;
@@ -22,13 +21,13 @@ public class Ant {
         this.lastKnownFoodPosition = null;
     }
 
-    public void scatter(List<Point> f) {
+    public void scatter(List<Point> food) {
         int randomX = RNG.random(-1, 1);
         int randomY = RNG.random(-1, 1);
         this.setPosition(new Point(this.position.x + randomX, this.position.y + randomY));
-        for (Point food : f){
-            if (food.getLocation() == this.getPosition()){
-                this.lastKnownFoodPosition = this.position;
+        for (Point f : food){
+            if (f.getLocation().equals(new Point(this.getPositionX(), this.getPositionY()))){
+                this.lastKnownFoodPosition = new Point(this.getPositionX(), this.getPositionY());
                 this.status = Status.RETURNING_COLONY;
             }
         }
@@ -36,7 +35,7 @@ public class Ant {
 
     // TODO Méthodes de classes
 
-    private void checkPos(Point lastFood, int newPosX, int newPosY) {
+    private void changePos(Point lastFood, int newPosX, int newPosY) {
         if (newPosX > lastFood.x){
             newPosX--;
         }
@@ -58,18 +57,22 @@ public class Ant {
         int newPosX = this.position.x;
         int newPosY = this.position.y;
 
+        if (this.status == Status.RETURNING_COLONY ){
+            this.status = Status.FETCHING_FOOD;
+        }
+
         if (this.status == Status.WANDERING){
             return false;
         }
 
-        if (this.getPosition() == lastFood){
+        if (new Point(this.getPositionX(), this.getPositionY()).equals(lastFood)){
             this.status = Status.RETURNING_COLONY;
             collect();
             return false;
         }
 
-        checkPos(lastFood, newPosX, newPosY);
-
+        changePos(lastFood, newPosX, newPosY);
+        this.status = Status.FETCHING_FOOD;
         return true;
     }
 
@@ -77,10 +80,15 @@ public class Ant {
         Point posCol = this.colonyPosition;
         int newPosX = this.position.x;
         int newPosY = this.position.y;
-        if (this.getPosition() == posCol && this.status == Status.RETURNING_COLONY){
+
+        if (this.status == Status.FETCHING_FOOD ){
+            this.status = Status.RETURNING_COLONY;
+        }
+
+        if (new Point(this.getPositionX(), this.getPositionY()).equals(posCol) && this.status == Status.RETURNING_COLONY){
             return true;
         }
-        checkPos(posCol, newPosX, newPosY);
+        changePos(posCol, newPosX, newPosY);
         return false;
     }
 
@@ -93,12 +101,14 @@ public class Ant {
     }
 
     public Point getPosition() {
-        return this.position;
+        return new Point(this.getPositionX(), this.getPositionY());
     }
 
     public Status getStatus() {
         return this.status;
     }
+
+    public void setStatus(Status status) { this.status = status;}
 
     public void setPosition(Point point) {
         this.position = new Point(point.x, point.y);

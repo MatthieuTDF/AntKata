@@ -1,5 +1,6 @@
 package AntKata;
 
+import AntKata.Random.RNG;
 import AntKata.ant.Ant;
 import AntKata.ant.Colony;
 import AntKata.ant.CellType;
@@ -9,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -18,6 +20,7 @@ import java.util.Arrays;
 public class Field extends JPanel {
     private BufferedImage image;
     private Colony c;
+    private Colony c2;
     private List<Food> food;
     private int widthX;
     private int heightX;
@@ -90,8 +93,11 @@ public class Field extends JPanel {
     }
 
     private void syncCellArrayAndFood() {
-        Arrays.fill(cellArray, CellType.NORMAL);
-        cellArray[this.c.getPositionX()][this.c.getPositionY()] = CellType.COLONY;
+        for (int i=0; i<cellArray.length; i++) {
+            Arrays.fill(this.cellArray[i], CellType.NORMAL);
+        }
+        this.cellArray[this.c.getPositionX()][this.c.getPositionY()] = CellType.COLONY;
+        this.cellArray[this.c2.getPositionX()][this.c2.getPositionY()] = CellType.COLONY;
         for (Food f: this.food) {
             Point foodPos = f.getPosition();
             this.cellArray[foodPos.x][foodPos.y] = CellType.FOOD;
@@ -99,25 +105,45 @@ public class Field extends JPanel {
     }
 
     private void initColonyAndFood() {
-        this.c = new Colony(0, new Point(this.widthX / 2, this.heightX / 2));
+        this.c = new Colony(1, new Point(this.widthX / 2, this.heightX / 2));
+        this.c2 = new Colony(1, new Point(RNG.random(0, widthX), RNG.random(0, heightX)));
+        while (c2.getPosition().equals(c.getPosition())) {
+            this.c2 = new Colony(1, new Point(RNG.random(0, widthX), RNG.random(0, heightX)));
+        }
         this.food = new ArrayList<>();
         this.food.add(new Food(3,3));
-        this.cellArray[this.widthX/2][this.heightX/2] = CellType.COLONY;
         syncCellArrayAndFood();
     }
 
     public void nextTurn() {
-        foodLabel.setText(String.valueOf(c.getFoodCollected()));
+        foodLabel.setText(String.valueOf(c.getFoodCollected()) + "/" + String.valueOf(c2.getFoodCollected()));
 
         this.image = new BufferedImage(widthX, heightX, BufferedImage.TYPE_INT_ARGB);
 
-        for (Ant a : c.getAnts())
+        if  (c.getHp() > 0) {
+            for (Ant a : c.getAnts())
+                this.image.setRGB(a.getPositionX(), a.getPositionY(), Color.blue.getRGB());
+            if (c2.getHp() > 0) {
+                for (Ant a : c2.getAnts())
+                    this.image.setRGB(a.getPositionX(), a.getPositionY(), Color.blue.getRGB());
+                c.next(cellArray, c2);
+            }
+            else c.next(cellArray);
+        }
+        else if (c2.getHp() > 0) {
+            for (Ant a : c2.getAnts())
+                this.image.setRGB(a.getPositionX(), a.getPositionY(), Color.blue.getRGB());
+            c2.next(cellArray);
+        }
+
+        for (Ant a : c2.getAnts())
             this.image.setRGB(a.getPositionX(), a.getPositionY(), Color.blue.getRGB());
 
         for (Point p : food.stream().map(Food::getPosition).collect(Collectors.toList()))
             this.image.setRGB(p.x, p.y, Color.green.getRGB());
 
         this.image.setRGB(c.getPositionX(), c.getPositionY(), Color.red.getRGB());
+        this.image.setRGB(c2.getPositionX(), c2.getPositionY(), Color.black.getRGB());
 
         repaint();
 

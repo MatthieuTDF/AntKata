@@ -87,4 +87,54 @@ public class AntTest {
         Assert.assertEquals(Status.RETURNING_COLONY, c.getAnts().get(1).getStatus());
         Assert.assertEquals(food.get(0), c.getAnts().get(1).getLastKnownFoodPosition());
     }
+
+    @Test
+    public void antsAttackEnnemyColony() {
+        // given
+        Colony c = new Colony(2, new Point(5, 5));
+        Colony c2 = new Colony(0, new Point(4, 4));
+
+        CellType[][] cellArray = new CellType[10][10];
+        cellArray[5][5] = CellType.COLONY;
+        cellArray[4][4] = CellType.COLONY;
+
+        c.next(cellArray);
+        
+        Assert.assertEquals(new Point(4, 4), c.getAnts().get(0).getPosition());
+        Assert.assertEquals(new Point(4, 4), c.getAnts().get(1).getPosition());
+        // ants found second colony
+        c.next(cellArray);
+
+        Assert.assertEquals(new Point(4, 4), c.getAnts().get(0).getPosition());
+        Assert.assertEquals(new Point(4, 4), c.getAnts().get(1).getPosition());
+        Assert.assertEquals(90, c2.getHp());
+    }
+
+    @Test
+    public void antsAttackOtherAnts() {
+        Colony c = new Colony(1, new Point(9, 9));
+        Colony c2 = new Colony(1, new Point(5, 5));
+
+        CellType[][] cellArray = new CellType[10][10];
+        cellArray[5][5] = CellType.COLONY;
+        cellArray[4][4] = CellType.COLONY;
+
+        c.next(cellArray);
+        c2.next(cellArray);
+
+        // c ant in 8,8
+        // c2 ant in 6,6
+
+        Assert.assertEquals(new Point(8, 8), c.getAnts().get(0).getPosition());
+        Assert.assertEquals(new Point(6, 6), c2.getAnts().get(0).getPosition());
+        // ants move to 7,7 and meet
+        c.next(cellArray);
+        c2.next(cellArray);
+        // ants in the right position
+        Assert.assertEquals(new Point(7, 7), c.getAnts().get(0).getPosition());
+        Assert.assertEquals(new Point(7, 7), c2.getAnts().get(0).getPosition());
+        // ants attacked each other
+        Assert.assertEquals(5, c.getAnts().get(0).getHp());
+        Assert.assertEquals(5, c2.getAnts().get(0).getHp());
+    }
 }

@@ -84,7 +84,7 @@ public class Field extends JPanel {
 
     private void initColonyAndFood() {
         // TODO
-        this.c = new Colony(5, new Point(this.widthX / 2, this.heightX / 2));
+        this.c = new Colony(100, new Point(this.widthX / 2, this.heightX / 2));
         this.food = new ArrayList<>();
     }
 
@@ -114,6 +114,7 @@ public class Field extends JPanel {
                         a.setStatus(Status.WANDERING);
                     }
                 }*/
+                // on n'a pas réussi a l'implémenter dans le Ant.java, donc quand la nourriture disparait, elles continuent d'y aller...
                 food.remove(f);
             }else{
                 foods.add(f.getPosition());

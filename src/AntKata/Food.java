@@ -24,8 +24,9 @@ public class Food {
     }
 
     public boolean isAlive() {
-        return this.lifeTime > 0;
+        return this.lifeTime > 5;
     }
+
 
     public void nextTurn() {
         this.lifeTime--;

@@ -1,8 +1,10 @@
 package AntKata.ant;
 
+import AntKata.Food;
 import AntKata.Random.RNG;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -88,6 +90,7 @@ public class Ant {
         if (new Point(this.getPositionX(), this.getPositionY()).equals(posCol) && this.status == Status.RETURNING_COLONY){
             return true;
         }
+
         changePos(posCol, newPosX, newPosY);
         return false;
     }
